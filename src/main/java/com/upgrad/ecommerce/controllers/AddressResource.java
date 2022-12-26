@@ -25,26 +25,26 @@ public class AddressResource {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<List<AddressDTO>> getAllAddresss() {
         return ResponseEntity.ok(addressService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<AddressDTO> getAddress(@PathVariable final String id) {
         return ResponseEntity.ok(addressService.get(id));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<String> createAddress(@RequestBody @Valid final AddressDTO addressDTO) {
         return new ResponseEntity<>(addressService.create(addressDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<Void> updateAddress(@PathVariable final String id,
                                               @RequestBody @Valid final AddressDTO addressDTO) {
         addressService.update(id, addressDTO);
@@ -53,7 +53,7 @@ public class AddressResource {
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteAddress(@PathVariable final String id) {
         addressService.delete(id);
         return ResponseEntity.noContent().build();

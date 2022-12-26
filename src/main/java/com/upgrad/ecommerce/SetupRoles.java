@@ -23,6 +23,7 @@ public class SetupRoles implements ApplicationListener<ApplicationReadyEvent> {
         for (ERole role : roles) {
             try {
                 roleService.create(role);
+                System.out.println("Role Created " + role.name());
             } catch (Exception e) {
                 System.out.println("Skipping Role Creation");
             }

@@ -2,7 +2,9 @@ package com.upgrad.ecommerce.services;
 
 import com.upgrad.ecommerce.models.ERole;
 import com.upgrad.ecommerce.models.Role;
+import com.upgrad.ecommerce.repositories.ProductRepository;
 import com.upgrad.ecommerce.repositories.RoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,11 +18,8 @@ public class RoleService {
     }
 
     public void create(final ERole roleName) {
-        Optional<Role> roleByName = roleRepository.findByName(roleName);
-        if (roleByName == null) {
-            Role role = new Role();
-            role.setName(roleName.name());
-            roleRepository.save(role);
-        }
+        Role role = new Role();
+        role.setName(roleName.name());
+        roleRepository.save(role);
     }
 }

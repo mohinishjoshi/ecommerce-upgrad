@@ -25,20 +25,20 @@ public class OrderResource {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable final String id) {
         return ResponseEntity.ok(orderService.get(id));
     }
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<String> createOrder(@RequestBody @Valid final OrderDTO orderDTO) {
         return new ResponseEntity<>(orderService.create(orderDTO), HttpStatus.CREATED);
     }

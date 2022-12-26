@@ -48,13 +48,13 @@ public class ProductResource {
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> createProduct(@RequestBody @Valid final ProductDTO productDTO) {
         return new ResponseEntity<>(productService.create(productDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> updateProduct(@PathVariable final String id,
                                               @RequestBody @Valid final ProductDTO productDTO) {
         productService.update(id, productDTO);
@@ -63,7 +63,7 @@ public class ProductResource {
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable final String id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();

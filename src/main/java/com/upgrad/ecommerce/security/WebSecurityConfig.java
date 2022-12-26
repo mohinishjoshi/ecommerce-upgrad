@@ -69,7 +69,7 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated();
 
 
-        http.headers().frameOptions().sameOrigin();
+//        http.headers().frameOptions().sameOrigin();
 
         http.authenticationProvider(authenticationProvider());
 

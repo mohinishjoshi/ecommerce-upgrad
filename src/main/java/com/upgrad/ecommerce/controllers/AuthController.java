@@ -10,6 +10,7 @@ import com.upgrad.ecommerce.repositories.RoleRepository;
 import com.upgrad.ecommerce.repositories.UserRepository;
 import com.upgrad.ecommerce.security.jwt.JwtUtils;
 import com.upgrad.ecommerce.security.services.UserDetailsImpl;
+import com.upgrad.ecommerce.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,10 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -31,20 +29,23 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private final List<ERole> roles = List.of(ERole.ADMIN, ERole.USER);
+    private final RoleService roleService;
     @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     RoleRepository roleRepository;
-
     @Autowired
     PasswordEncoder encoder;
 
     @Autowired
     JwtUtils jwtUtils;
+
+    public AuthController(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -79,6 +80,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         }
 
+        checkRolesExist();
+
         // Create new user's account
         User user = new User();
         user.setEmail(signUpRequest.getEmail());
@@ -109,5 +112,16 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private void checkRolesExist() {
+        for (ERole role : roles) {
+            try {
+                roleService.create(role);
+                System.out.println("Role Created " + role.name());
+            } catch (Exception e) {
+                System.out.println("Skipping Role Creation");
+            }
+        }
     }
 }
