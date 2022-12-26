@@ -2,6 +2,7 @@ package com.upgrad.ecommerce.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -16,5 +17,6 @@ public class Role {
 
     @NotNull
     @Size(max = 10)
+    @Indexed(unique = true)
     private String name;
 }
