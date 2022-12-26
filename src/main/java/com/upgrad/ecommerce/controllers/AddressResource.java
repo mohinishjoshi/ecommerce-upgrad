@@ -13,8 +13,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api/addresss", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/addresses", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AddressResource {
 
     private final AddressService addressService;

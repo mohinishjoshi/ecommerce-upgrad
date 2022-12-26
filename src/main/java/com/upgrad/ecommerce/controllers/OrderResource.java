@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/api/orders", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderResource {

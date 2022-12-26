@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        Role userRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+        Role userRole = roleRepository.findByName(ERole.ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
         userRepository.save(user);
@@ -55,7 +55,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
         Set<GrantedAuthority> roles = new HashSet<>();
         userRoles.forEach((role) -> {
-            roles.add(new SimpleGrantedAuthority(role.getName().name()));
+            roles.add(new SimpleGrantedAuthority(role.getName()));
         });
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>(roles);
