@@ -27,6 +27,7 @@ POST http://localhost:8080/api/auth/signup
 }
 ```
 For Admin User Signup
+```
 POST http://localhost:8080/api/auth/signup
 {
     "email": "demo@demo.com",
@@ -144,7 +145,7 @@ DELETE http://localhost:8080/api/addresses/{id}
 GET http://localhost:8080/api/orders
 ```
 
-### Get an Address
+### Get an Order
 ```
 GET http://localhost:8080/api/orders/{id}
 ```
