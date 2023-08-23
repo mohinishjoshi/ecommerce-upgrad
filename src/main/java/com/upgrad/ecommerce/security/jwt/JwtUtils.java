@@ -20,11 +20,7 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        return req.getHeader("x-auth-token");
     }
 
     public String getUserNameFromJwtToken(String token) {

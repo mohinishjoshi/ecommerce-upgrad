@@ -8,10 +8,14 @@ import com.upgrad.ecommerce.models.Role;
 import com.upgrad.ecommerce.models.User;
 import com.upgrad.ecommerce.repositories.RoleRepository;
 import com.upgrad.ecommerce.repositories.UserRepository;
+import com.upgrad.ecommerce.security.jwt.AuthTokenFilter;
 import com.upgrad.ecommerce.security.jwt.JwtUtils;
 import com.upgrad.ecommerce.security.services.UserDetailsImpl;
 import com.upgrad.ecommerce.services.RoleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,14 +25,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
-
-import static org.springframework.http.ResponseEntity.ok;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     private final List<ERole> roles = List.of(ERole.ADMIN, ERole.USER);
     private final RoleService roleService;
     @Autowired
@@ -58,10 +63,11 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         String token = jwtUtils.generateTokenFromUsername(userDetails.getEmail());
-
-        Map<Object, Object> model = new HashMap<>();
-        model.put("token", token);
-        return ok(model);
+        
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("x-auth-token", token);
+        return ResponseEntity.ok()
+                .headers(responseHeaders).build();
 
 //        List<String> roles = userDetails.getAuthorities().stream()
 //                .map(item -> item.getAuthority())
@@ -90,17 +96,22 @@ public class AuthController {
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
+        logger.info("Recieved Roles: {}", strRoles);
+
         if (strRoles == null) {
+            logger.info("Got No ROles, making user");
             Role userRole = roleRepository.findByName(ERole.USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 if (role.equals("admin")) {
+                    logger.info("Got Admin Role: {}", role);
                     Role adminRole = roleRepository.findByName(ERole.ADMIN)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                     roles.add(adminRole);
                 } else {
+                    logger.info("Got User Role: {}", role);
                     Role userRole = roleRepository.findByName(ERole.USER)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                     roles.add(userRole);

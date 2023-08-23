@@ -1,12 +1,15 @@
 package com.upgrad.ecommerce.controllers;
 
 import com.upgrad.ecommerce.dto.AddressDTO;
+import com.upgrad.ecommerce.security.services.UserDetailsImpl;
 import com.upgrad.ecommerce.services.AddressService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,16 +42,21 @@ public class AddressResource {
     @PostMapping
     @ApiResponse(responseCode = "201")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<String> createAddress(@RequestBody @Valid final AddressDTO addressDTO) {
-        return new ResponseEntity<>(addressService.create(addressDTO), HttpStatus.CREATED);
+    public ResponseEntity<AddressDTO> createAddress(@RequestBody @Valid AddressDTO addressDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        addressDTO.setUser(userDetails.getId());
+        String addressId = addressService.create(addressDTO);
+        return new ResponseEntity<>(addressService.get(addressId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Void> updateAddress(@PathVariable final String id,
-                                              @RequestBody @Valid final AddressDTO addressDTO) {
+    public ResponseEntity<AddressDTO> updateAddress(@PathVariable final String id,
+                                                    @RequestBody @Valid final AddressDTO addressDTO) {
         addressService.update(id, addressDTO);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(addressService.get(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

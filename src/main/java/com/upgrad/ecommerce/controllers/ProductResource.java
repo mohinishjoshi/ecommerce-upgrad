@@ -1,8 +1,11 @@
 package com.upgrad.ecommerce.controllers;
 
 import com.upgrad.ecommerce.dto.ProductDTO;
+import com.upgrad.ecommerce.security.jwt.AuthTokenFilter;
 import com.upgrad.ecommerce.services.ProductService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductResource {
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     private final ProductService productService;
 
@@ -49,16 +53,17 @@ public class ProductResource {
     @PostMapping
     @ApiResponse(responseCode = "201")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> createProduct(@RequestBody @Valid final ProductDTO productDTO) {
-        return new ResponseEntity<>(productService.create(productDTO), HttpStatus.CREATED);
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid final ProductDTO productDTO) {
+        String productId = productService.create(productDTO);
+        return new ResponseEntity<>(productService.get(productId), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> updateProduct(@PathVariable final String id,
-                                              @RequestBody @Valid final ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable final String id,
+                                                    @RequestBody @Valid final ProductDTO productDTO) {
         productService.update(id, productDTO);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(productService.get(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -12,8 +12,7 @@ public class OrderDTO {
 
     @NotNull
     private Integer quantity;
-
-    @NotNull
+    
     private String user;
 
     @NotNull
