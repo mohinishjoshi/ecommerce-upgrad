@@ -2,7 +2,7 @@
 
 ## Pre-Requisites
 
-- Java - https://www.java.com/en/download/help/download_options.html
+- Java 11 - https://www.java.com/en/download/help/download_options.html
 - Maven - https://www.baeldung.com/install-maven-on-windows-linux-mac
 - MongoDB - https://www.mongodb.com/docs/manual/installation/
 - IDE - IntelliJ Community Edition - https://www.jetbrains.com/idea/download
